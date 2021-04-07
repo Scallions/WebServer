@@ -26,9 +26,14 @@ private:
     Acceptor acceptor_;
     EventLoop *loop_; // acceptor loop
     EventLoopThreadPool pool_;
-    NewConnectionCallback newConnectionCallback_;
+    // conn 的回调函数
+//    ConnectionCallback ConnectionCallback_;
+    using ReadCallback = std::function<void()>; // TODO: 接口未定义
+    using WriteCallback = std::function<void()>;
     ReadCallback readCallback_;
-    WriteCallback writeCallback;_;
+    WriteCallback writeCallback_;
+
+    void onNewConnection(int fd);
 };
 
 

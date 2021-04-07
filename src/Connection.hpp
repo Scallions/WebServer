@@ -5,20 +5,24 @@
 #ifndef MYSERVER_CONNECTION_HPP
 #define MYSERVER_CONNECTION_HPP
 
-
+#include <sys/epoll.h>
 #include <memory>
 #include <functional>
-#include "EventLoop.hpp"
+//#include "EventLoop.hpp" // 互相引用头文件= =
+
+class EventLoop;
 
 class Connection {
 public:
     using EventCallback=std::function<void()>;
-    Connection(EventLoop *loop, int socketFd);
+//    Connection(EventLoop *loop, int socketFd);
 //    Connection(const Connection &) = default;
 //
 //    Connection & operator = (const Connection &) = default;
-
+    Connection(EventLoop *loop, int fd);
     ~Connection();
+
+    int getFd(){return fd_;}
 
     void handleEvent();
 
@@ -28,7 +32,7 @@ public:
 
 private:
     EventLoop *loop_;
-    const int fd_;
+    int fd_;
     int events_; // type
     int revents_; // received event types
 

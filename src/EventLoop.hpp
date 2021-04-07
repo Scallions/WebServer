@@ -24,8 +24,8 @@ public:
     void removeConnection(SP_Connection conn);
 
     // 处理队列事件
-    void runInLoop();
-    void queueInLoop();
+    void runInLoop(Functor);
+    void queueInLoop(Functor);
 
 private:
     bool looping_;  // 是否在循环
@@ -34,7 +34,7 @@ private:
     std::mutex mutex_;
     std::vector<Functor> funcList_; // 函数队列
     std::vector<SP_Connection> connList_;
-    const pid_t thread_;
+    pid_t thread_;
 
     void doPendingFunc();
 };

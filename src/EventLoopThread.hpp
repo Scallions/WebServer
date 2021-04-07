@@ -5,6 +5,9 @@
 #ifndef MYSERVER_EVENTLOOPTHREAD_HPP
 #define MYSERVER_EVENTLOOPTHREAD_HPP
 
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include "EventLoop.hpp"
 
@@ -12,14 +15,14 @@ class EventLoopThread {
 public:
     EventLoopThread();
     ~EventLoopThread();
-    void startLoop();
+    EventLoop* startLoop();
 
 private:
     bool exiting_;
-    Thread thread_;
-    Mutex mutex_;
-    Condition cond_;
-    EventLoop loop_;
+    std::thread thread_;
+    std::mutex mutex_;
+    std::condition_variable cond_;
+    EventLoop *loop_;
 
     void threadFunc();
 };

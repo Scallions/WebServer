@@ -5,8 +5,8 @@
 #include <cassert>
 #include "EventLoop.hpp"
 
-EventLoop::EventLoop() : thread_(CurrentThread::tid()) {
-
+EventLoop::EventLoop() : thread_() {
+    poller_ = std::unique_ptr<Epoll>(new Epoll());
 }
 
 EventLoop::~EventLoop() {
@@ -49,10 +49,15 @@ void EventLoop::doPendingFunc() {
     }
 }
 
-void EventLoop::runInLoop() {
-
+void EventLoop::runInLoop(Functor cb) {
+    queueInLoop(std::move(cb));
 }
 
-void EventLoop::queueInLoop() {
+void EventLoop::queueInLoop(Functor cb) {
+    std::unique_lock<std::mutex> mutex_;
+    funcList_.push_back(std::move(cb));
+}
 
+void EventLoop::addConnection(SP_Connection conn) {
+    poller_->add(conn, 0);
 }

@@ -11,14 +11,18 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <cstring>
-
+#include <functional>
+#include <memory>
 #include "EventLoop.hpp"
-#include "Connection.hpp"
+//#include "Connection.hpp"
 
+//class EventLoop;
+class Connection;
 
 class Acceptor {
 public:
     using NewConnectionCallback = std::function<void(int sockfd)>;
+    Acceptor() = default;
     Acceptor(EventLoop *loop, int port);
     ~Acceptor();
 
@@ -30,7 +34,7 @@ public:
 private:
     EventLoop *loop_;
     int listenFd_;
-    Connection acceptConnection_;
+    SP_Connection acceptConnection_;
     NewConnectionCallback newConnectionCallback_;
 };
 

@@ -25,6 +25,8 @@ public:
 private:
     static const int MAXFDS = 100000;
     int epollFd_;
+    using EventList = std::vector<epoll_event>;
+    EventList events_;
 };
 
 
