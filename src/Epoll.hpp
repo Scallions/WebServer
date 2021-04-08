@@ -8,6 +8,7 @@
 #include <sys/epoll.h>
 #include <unordered_map>
 #include <vector>
+#include <map>
 #include "Connection.hpp"
 
 class Epoll {
@@ -27,6 +28,10 @@ private:
     int epollFd_;
     using EventList = std::vector<epoll_event>;
     EventList events_;
+    using ConnectionList = std::map<int, SP_Connection>;
+    ConnectionList conns_;
+
+    void fillActivateConnection(std::vector<SP_Connection> &connList, int numEvents);
 };
 
 

@@ -2,9 +2,16 @@
 // Created by Scallions on 2021/4/7.
 //
 
+#include <sys/socket.h>
+//#include <fcntl.h>
+#include <unistd.h>
 #include "Connection.hpp"
 
-Connection::Connection(EventLoop *loop, int socketFd): loop_(loop), fd_(socketFd), events_(0), revents_(0) {
+Connection::Connection(EventLoop *loop, int socketFd):
+    loop_(loop),
+    fd_(socketFd),
+    events_(0),
+    revents_(0) {
 
 }
 

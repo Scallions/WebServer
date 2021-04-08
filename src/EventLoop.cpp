@@ -5,8 +5,13 @@
 #include <cassert>
 #include "EventLoop.hpp"
 
-EventLoop::EventLoop() : thread_() {
-    poller_ = std::unique_ptr<Epoll>(new Epoll());
+EventLoop::EventLoop() :
+    looping_(false),
+    poller_(new Epoll()),
+    quit_(false),
+    thread_()
+{
+
 }
 
 EventLoop::~EventLoop() {
@@ -59,5 +64,6 @@ void EventLoop::queueInLoop(Functor cb) {
 }
 
 void EventLoop::addConnection(SP_Connection conn) {
+    std::cout<<"add conn: " << conn->getFd() << std::endl;
     poller_->add(conn, 0);
 }

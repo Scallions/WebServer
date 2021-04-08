@@ -23,9 +23,9 @@ private:
     int port_;
     int listen_;
     int thread_;
-    Acceptor acceptor_;
     EventLoop *loop_; // acceptor loop
     EventLoopThreadPool pool_;
+    Acceptor acceptor_;
     // conn 的回调函数
 //    ConnectionCallback ConnectionCallback_;
     using ReadCallback = std::function<void()>; // TODO: 接口未定义

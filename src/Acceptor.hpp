@@ -13,6 +13,7 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <fcntl.h>
 #include "EventLoop.hpp"
 //#include "Connection.hpp"
 

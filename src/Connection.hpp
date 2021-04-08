@@ -8,6 +8,7 @@
 #include <sys/epoll.h>
 #include <memory>
 #include <functional>
+#include <iostream>
 //#include "EventLoop.hpp" // 互相引用头文件= =
 
 class EventLoop;
@@ -30,6 +31,7 @@ public:
     void setReadCallback(EventCallback cb);
     void setWriteCallback(EventCallback cb);
 
+    void setRevents(int revt) { revents_ = revt;};
 private:
     EventLoop *loop_;
     int fd_;
