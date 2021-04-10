@@ -26,16 +26,32 @@ void Epoll::add(SP_Connection req, int timeout) {
     event.data.fd = fd;
     epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &event);
     conns_[fd] = req;
-    std::cout << "epoll add: " << fd << std::endl;
+    std::cout <<"epoll fd: " << epollFd_ << " add: " << fd << std::endl;
+}
+
+void Epoll::mod(SP_Connection req, int timeout) {
+    int fd = req->getFd();
+    epoll_event event;
+    memset(&event, 0, sizeof(event));
+    event.events = req->getEvents();
+    event.data.fd = fd;
+    epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &event);
+}
+
+void Epoll::del(SP_Connection req) {
+    int fd = req->getFd();
+    epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, NULL);
+    conns_.erase(fd);
+    ::close(fd);
 }
 
 void Epoll::poll(int time, std::vector<SP_Connection> &connList) {
     int numEvents = epoll_wait(epollFd_,
                                  &*events_.begin(),
                                  static_cast<int>(events_.size()),
-                                 0);
+                                 5);
     if(numEvents >0 ){
-        std::cout << "epoll poll num: " << numEvents << std::endl;
+        std::cout << "epoll " << epollFd_ <<" poll num: " << numEvents << std::endl;
         fillActivateConnection(connList, numEvents);
     }
 }
@@ -51,3 +67,5 @@ void Epoll::fillActivateConnection(std::vector<SP_Connection> &connList, int num
 
     }
 }
+
+

@@ -7,12 +7,17 @@
 
 #include <sys/epoll.h>
 #include <unordered_map>
+#include <unistd.h>
 #include <vector>
 #include <map>
 #include "Connection.hpp"
 
+class Connection;
+
 class Epoll {
 public:
+    using SP_Connection = std::shared_ptr<Connection>;
+
     Epoll();
     ~Epoll();
     void add(SP_Connection req, int timeout);

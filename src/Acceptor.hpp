@@ -22,7 +22,7 @@ class Connection;
 
 class Acceptor {
 public:
-    using NewConnectionCallback = std::function<void(int sockfd)>;
+    using NewConnectionCallback = std::function<void()>;
     Acceptor() = default;
     Acceptor(EventLoop *loop, int port);
     ~Acceptor();
@@ -32,6 +32,8 @@ public:
     void setNewConnectionCallback(const NewConnectionCallback &cb){
         newConnectionCallback_ = cb;
     }
+
+    int getFd(){return listenFd_;}
 private:
     EventLoop *loop_;
     int listenFd_;

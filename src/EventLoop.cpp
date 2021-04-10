@@ -8,8 +8,7 @@
 EventLoop::EventLoop() :
     looping_(false),
     poller_(new Epoll()),
-    quit_(false),
-    thread_()
+    quit_(false)
 {
 
 }
@@ -64,6 +63,9 @@ void EventLoop::queueInLoop(Functor cb) {
 }
 
 void EventLoop::addConnection(SP_Connection conn) {
-    std::cout<<"add conn: " << conn->getFd() << std::endl;
     poller_->add(conn, 0);
+}
+
+void EventLoop::removeConnection(SP_Connection conn) {
+    poller_->del(conn);
 }

@@ -9,15 +9,16 @@
 #include <sys/epoll.h>
 #include <fcntl.h>
 
-BaseServer::BaseServer(int port, int thread, EventLoop *loop) :
+BaseServer::BaseServer(EventLoop* loop, int port, int thread) :
     port_(port),
-    listen_(false),
+    listenFd_(0),
     thread_(thread),
     loop_(loop),
     pool_(loop_,thread_),
     acceptor_(loop_, port_)
 {
-    acceptor_.setNewConnectionCallback(std::bind(&BaseServer::onNewConnection, this, std::placeholders::_1));
+    acceptor_.setNewConnectionCallback(std::bind(&BaseServer::onNewConnection, this));
+    listenFd_ = acceptor_.getFd();
 }
 
 BaseServer::~BaseServer(){
@@ -34,35 +35,39 @@ void BaseServer::close(){
     std::cout<<"Close"<<std::endl;
 }
 
-void BaseServer::onNewConnection(int fd) {
-    std::cout<<"new conn: " << fd << std::endl;
+void BaseServer::onNewConnection() {
+//    std::cout<<"new conn: " << fd << std::endl;
     EventLoop* ioLoop = pool_.getNextLoop();
-    SP_Connection conn{new Connection(ioLoop, fd)};
+    if(newConnCallback_){
+        newConnCallback_(ioLoop);
+        return;
+    }
+//    SP_Connection conn{new Connection(ioLoop, fd)};
 //    conn->setReadCallback(readCallback_);
 //    conn->setWriteCallback(writeCallback_);
-    conn->setReadCallback([&conn]{
-        int fd = conn->getFd();
-        std::cout<<"Handle : " << fd << std::endl;
-        char buf[20]={0};
-        int cnt = 0;
-        cnt = recv(fd, buf, sizeof(buf),0);
-        if(cnt==-1){
-            std::cout<<"read error"<<std::endl;
-            conn->setRevents( EPOLLIN );
-        }else if(cnt==0){
-            std::cout<<"remote close"<<std::endl;
-            ::close(fd);
-        }else{
-            std::cout<<"read "<<buf<<std::endl;
-        }
-    });
-    conn->setWriteCallback([&conn]{
-        int fd_ = conn->getFd();
-        std::cout << "write to: " << fd_ << std::endl;
-        send(fd_, "Hello\n", 7,0);
-        std::cout<<"write hello"<<std::endl;
-    });
-    loop_->addConnection(conn);
+//    conn->setReadCallback([&conn]{
+//        int fd = conn->getFd();
+//        std::cout<<"Handle : " << fd << std::endl;
+//        char buf[20]={0};
+//        int cnt = 0;
+//        cnt = recv(fd, buf, sizeof(buf),0);
+//        if(cnt==-1){
+//            std::cout<<"read error"<<std::endl;
+//            conn->setRevents( EPOLLIN );
+//        }else if(cnt==0){
+//            std::cout<<"remote close"<<std::endl;
+//            ::close(fd);
+//        }else{
+//            std::cout<<"read "<<buf<<std::endl;
+//        }
+//    });
+//    conn->setWriteCallback([&conn]{
+//        int fd_ = conn->getFd();
+//        std::cout << "write to: " << fd_ << std::endl;
+//        send(fd_, "Hello\n", 7,0);
+//        std::cout<<"write hello"<<std::endl;
+//    });
+//    loop_->addConnection(conn);
 }
 
 

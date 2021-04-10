@@ -9,11 +9,16 @@
 #include <vector>
 #include <functional>
 #include "Epoll.hpp"
+#include "Connection.hpp"
+
+class Connection;
+class Epoll;
 
 class EventLoop {
 
 public:
     using Functor = std::function<void()>;
+    using SP_Connection = std::shared_ptr<Connection>;
     EventLoop();
     ~EventLoop();
     void loop();
@@ -34,7 +39,7 @@ private:
     std::mutex mutex_;
     std::vector<Functor> funcList_; // 函数队列
     std::vector<SP_Connection> connList_;
-    pid_t thread_;
+//    pid_t thread_;
 
     void doPendingFunc();
 };

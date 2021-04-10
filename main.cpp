@@ -1,9 +1,9 @@
 #include <iostream>
-#include "src/BaseServer.hpp"
+#include "src/HttpServer.hpp"
 
 int main() {
     EventLoop loop;
-    BaseServer server(9999,4,&loop);
+    HttpServer server(&loop, 9999,4);
     server.start();
 //    server.
     loop.loop();

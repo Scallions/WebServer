@@ -11,18 +11,16 @@ Acceptor::Acceptor(EventLoop *loop, int port) :
     listenFd_(socket(PF_INET, SOCK_STREAM, 0)),
     acceptConnection_(new Connection(loop_, listenFd_))
 {
-
     // 设置监听socket
+//    fcntl(listenFd_, F_SETFL,fcntl(listenFd_, F_GETFL, 0) | SO_REUSEPORT);
     std::cout << "Create acceptor: "<< listenFd_ << std::endl;
-    if(listenFd_ < 0 ){
-        std::cout << "Create - listen socket: " << listenFd_ << std::endl;
-    }
+    int val=1;
+    setsockopt(listenFd_, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
     sockaddr_in serv_addr;
     memset(&serv_addr, sizeof(serv_addr), 0);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(port);
-    fcntl(listenFd_, F_SETFL,fcntl(listenFd_, F_GETFL, 0) | SO_REUSEPORT);
     bind(listenFd_, reinterpret_cast<const sockaddr *>(&serv_addr), sizeof(serv_addr));
 
     // 设置connection
@@ -42,10 +40,7 @@ void Acceptor::listening() {
 }
 
 void Acceptor::handleRead() {
-    int connfd = accept(listenFd_, NULL, NULL);
-    if(connfd>=0){
-        if(newConnectionCallback_){
-            newConnectionCallback_(connfd);
-        }
+    if(newConnectionCallback_){
+        newConnectionCallback_();
     }
 }

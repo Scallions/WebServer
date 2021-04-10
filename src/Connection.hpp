@@ -9,7 +9,7 @@
 #include <memory>
 #include <functional>
 #include <iostream>
-//#include "EventLoop.hpp" // 互相引用头文件= =
+#include "EventLoop.hpp" // 互相引用头文件= =
 
 class EventLoop;
 
@@ -30,8 +30,10 @@ public:
     // set callback func
     void setReadCallback(EventCallback cb);
     void setWriteCallback(EventCallback cb);
+    void setCloseCallback(EventCallback cb);
 
     void setRevents(int revt) { revents_ = revt;};
+    int getEvents(){ return events_;}
 private:
     EventLoop *loop_;
     int fd_;
@@ -40,6 +42,7 @@ private:
 
     EventCallback readCallback_;
     EventCallback writeCallback_;
+    EventCallback closeCallback_;
 };
 
 
